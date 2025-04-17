@@ -1,4 +1,5 @@
 <?php 
+
 define('SITE_ROOT', __DIR__);
 include SITE_ROOT."\header.php";
 
@@ -28,8 +29,27 @@ if ($result) {
     } 
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['primaryKey'])) {
+    $primaryKey = intval($_POST['primaryKey']);
     
+    $deleteSql = "DELETE FROM string_info WHERE string_id = ?";
+    $stmt = mysqli_prepare($conn, $deleteSql);
+    
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "i", $primaryKey);
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Record with ID $primaryKey deleted successfully.<br>";
+        } else {
+            echo "Error deleting record: " . mysqli_error($conn) . "<br>";
+        }
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Error preparing statement: " . mysqli_error($conn) . "<br>";
+    }
+}
 ?>
+ 
+
 <form id="" method="POST">
                 <!-- Primary Key Input -->
                 <input type="text" name="primaryKey" 
